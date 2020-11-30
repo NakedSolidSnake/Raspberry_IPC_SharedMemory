@@ -22,7 +22,7 @@
 
 static void inputHandler(void);
 
-static Button_t button7 = {
+static Button_t button = {
         .gpio.pin = 7,
         .gpio.eMode = eModeInput,
         .ePullMode = ePullModePullUp,
@@ -42,7 +42,7 @@ static char buf[BUFFER_SIZE] = {0}; /*!< Buffer para a escrita do dado */
 int main(int argc, char const *argv[])
 {
 
-    if(Button_init(&button7))
+    if(Button_init(&button))
         return EXIT_FAILURE;
 
     if(SHMemory_init(&shm))
@@ -60,9 +60,9 @@ int main(int argc, char const *argv[])
 static void inputHandler(void)
 {
     static int state = 0;
-    if(!Button_read(&button7)){
+    if(!Button_read(&button)){
         usleep(_1MS * 40);
-        while(!Button_read(&button7));
+        while(!Button_read(&button));
         usleep(_1MS * 40);
         state ^= 0x01;
 
