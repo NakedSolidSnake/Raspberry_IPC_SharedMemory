@@ -13,10 +13,7 @@ int SHMemory_init(SHMemory_t *shm)
     if(validParams(shm))
         ret = EXIT_FAILURE;
 
-    else if((shm->key = ftok(shm->path, shm->projId)) == -1)
-        ret = EXIT_FAILURE;
-    
-    else if((shm->id = shmget(shm->key, shm->size, shm->flags | IPC_CREAT)) == -1)
+    else if((shm->id = shmget(shm->projId, shm->size, shm->flags | IPC_CREAT)) == -1)
         ret = EXIT_FAILURE;
 
     else if((shm->shm = shmat(shm->id, (void *)0, 0)) == NULL)
