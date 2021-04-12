@@ -4,57 +4,59 @@
 #include <sys/shm.h>
 #include <sys/ipc.h>
 
-static int validParams(SHMemory_t *shm);
+static bool validParams(Shared_Memory_t *shm);
 
-int SHMemory_init(SHMemory_t *shm)
+bool Shared_Memory_Init(Shared_Memory_t *shm)
 {
-    int ret = EXIT_SUCCESS;
+    int status = true;
 
-    if(validParams(shm))
-        ret = EXIT_FAILURE;
+    if(validParams(shm) == false)
+        status = false;
 
     else if((shm->id = shmget(shm->projId, shm->size, shm->flags | IPC_CREAT)) == -1)
-        ret = EXIT_FAILURE;
+        status = false;
 
     else if((shm->shm = shmat(shm->id, (void *)0, 0)) == NULL)
-        ret = EXIT_FAILURE;
+        status = false;
 
-    return ret;
+    return status;
 }
 
-int SHMemory_detach(SHMemory_t *shm)
+bool Shared_Memory_Detach(Shared_Memory_t *shm)
 {
-    int ret = EXIT_SUCCESS;
+    bool status = true;
+
     if (!shm)
-        ret = EXIT_FAILURE;
+        status = false;
     else
         shmdt(shm->shm);
 
-    return ret;
+    return status;
 }
 
-int SHMemory_destroy(SHMemory_t *shm)
+bool Shared_Memory_Destroy(Shared_Memory_t *shm)
 {
-    int ret = EXIT_SUCCESS;
+    bool status = true;
+
     if (!shm)
-        ret = EXIT_FAILURE;
+        status = false;
     else
         shmctl(shm->id, IPC_RMID, 0);
 
-    return ret;
+    return status;
 }
 
-static int validParams(SHMemory_t *shm)
+static bool validParams(Shared_Memory_t *shm)
 {
-    int ret = EXIT_SUCCESS;
+    bool status = true;
     if (!shm)
-        ret = EXIT_FAILURE;
+        status = false;
 
     else if(strlen(shm->path) <= 0 || strlen(shm->path) > MEMORY_PATH_LEN)
-        ret = EXIT_FAILURE;
+        status = false;
 
     else if(shm->size <= 0 || shm->size > MEMORY_PATH_LEN)
-        ret = EXIT_FAILURE;
+        status = false;
 
-    return ret;
+    return status;
 }

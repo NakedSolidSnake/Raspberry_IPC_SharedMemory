@@ -2,6 +2,8 @@
 #ifndef __SHM_H
 #define __SHM_H
 
+#include <stdbool.h>
+
 #define MEMORY_PATH_LEN     1024
 
 typedef struct
@@ -13,30 +15,13 @@ typedef struct
     int flags;                  /*!< Detailed description after the member */
     void *shm;                  /*!< Detailed description after the member */
     int id;                     /*!< Detailed description after the member */
-}SHMemory_t;
+} Shared_Memory_t;
 
-/**
- * @brief Inicia a Shared memory
- * 
- * @param shm Estrutura de configuração do objeto shm
- * @return int 0->Success 1->Error
- */
-int SHMemory_init(SHMemory_t *shm);
 
-/**
- * @brief Desacopla Shared Memory 
- * 
- * @param shm  Estrutura de configuração do objeto shm
- * @return int 0->Success 1->Error
- */
-int SHMemory_detach(SHMemory_t *shm);
+bool Shared_Memory_Init(Shared_Memory_t *shm);
 
-/**
- * @brief Remove Shared Memory alocada pela função  SHMemory_init
- * 
- * @param shm Estrutura de configuração do objeto shm
- * @return int 0->Success 1->Error
- */
-int SHMemory_destroy(SHMemory_t *shm);
+bool Shared_Memory_Detach(Shared_Memory_t *shm);
+
+bool Shared_Memory_Destroy(Shared_Memory_t *shm);
 
 #endif
