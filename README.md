@@ -2,12 +2,12 @@
 
 ## Tópicos
 * [Introdução](#introdução)
-* [Semaphore System V](#semaphore-system-v-1)
+* [Shared Memory System V](#shared-memory-system-v-1)
 * [Systemcalls](#systemcalls)
 * [ipcs](#ipcs)
 * [Implementação](#implementação)
-* [semaphore.h](#semaphoreh)
-* [semaphore.c](#semaphorec)
+* [shm.h](#shmh)
+* [shm.c](#shmc)
 * [launch_processes.c](#launch_processesc)
 * [button_interface.h](#button_interfaceh)
 * [button_interface.c](#button_interfacec)
@@ -29,7 +29,7 @@
 * [Referência](#referência)
 
 ## Introdução
-Em programação Multiprocesso, cada processo(programa em execução) possui sua memório isolada dos demais processos, mas há situações que todos esses processos possuem a mesma base de dados, existem aplicações que não é interessante cada processo possuir uma cópia desses dados, pois o dado está em constante mudança sendo ele um input para todos os processos. Ao invés de enviar o mesmo dado para todos os processos interessados, sendo esses processos residentes no mesmo contexto(computador), existe um recurso chamado de Shared Memory que compartilha um região de memória entre todos os processos. Neste artigo será abordado o uso do IPC Shared Memory System V.
+Em programação Multiprocesso, cada processo(programa em execução) possui sua memória isolada dos demais processos, mas há situações que todos esses processos possuem a mesma base de dados, existem aplicações que não é interessante cada processo possuir uma cópia desses dados, pois o dado está em constante mudança sendo ele um input para todos os processos. Ao invés de enviar o mesmo dado para todos os processos interessados, sendo esses processos residentes no mesmo contexto(computador), existe um recurso chamado de Shared Memory que compartilha um região de memória entre todos os processos. Neste artigo será abordado o uso do IPC Shared Memory System V.
 
 ## Shared Memory System V
 Shared Memory é um bloco de memória alocado pelo processo criador, esse bloco de memória fica acessível por meio de um identificador. Outros processos que quiserem usar essa memória deve se conectar a ela. Todo dado alterado nessa região fica disponível para todos os processos anexados.
@@ -300,8 +300,8 @@ Para facilitar a execução do exemplo, o exemplo proposto foi criado baseado em
 Pra obter uma cópia do projeto execute os comandos a seguir:
 
 ```bash
-$ git clone https://github.com/NakedSolidSnake/Raspberry_IPC_Semaphore_SystemV
-$ cd Raspberry_IPC_Semaphore_SystemV
+$ git clone https://github.com/NakedSolidSnake/Raspberry_IPC_SharedMemory_SystemV
+$ cd Raspberry_IPC_SharedMemory_SystemV
 $ mkdir build && cd build
 ```
 
@@ -414,10 +414,10 @@ $ ./kill_process.sh
 ```
 
 ## Conclusão
-Shared Memory é extremamente útil quando se precisa de performance no acesso aos dados, sendo um ótimo recurso para o compartilhamento de dados. Este recurso deve ser usado com muita cautela, se houver mais de um processo alterando os dados é necessário um mecanismo de sincronização([semphores](https://github.com/NakedSolidSnake/Raspberry_IPC_Semaphore_SystemV)) para que não haja concorrência no acesso as informações. Este é o último IPC do padrão System V. No próximo artigo será abordado o padrão POSIX.
+Shared Memory é extremamente útil quando se precisa de performance no acesso aos dados, sendo um ótimo recurso para o compartilhamento de dados. Este recurso deve ser usado com muita cautela, se houver mais de um processo alterando os dados é necessário um mecanismo de sincronização([semphores](https://github.com/NakedSolidSnake/Raspberry_IPC_Semaphore_SystemV)) para que não haja concorrência no acesso às informações. Este é o último IPC do padrão System V. No próximo artigo será abordado o padrão POSIX.
 
 ## Referência
-* [Link do projeto completo](https://github.com/NakedSolidSnake/Raspberry_IPC_Semaphore_SystemV)
+* [Link do projeto completo](https://github.com/NakedSolidSnake/Raspberry_IPC_SharedMemory_SystemV)
 * [Mark Mitchell, Jeffrey Oldham, and Alex Samuel - Advanced Linux Programming](https://www.amazon.com.br/Advanced-Linux-Programming-CodeSourcery-LLC/dp/0735710430)
 * [fork, exec e daemon](https://github.com/NakedSolidSnake/Raspberry_fork_exec_daemon)
 * [biblioteca hardware](https://github.com/NakedSolidSnake/Raspberry_lib_hardware)
