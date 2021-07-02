@@ -36,6 +36,7 @@ Shared Memory é um bloco de memória alocado pelo processo criador, esse bloco 
 
 ## Systemcalls
 
+Cria a Shared Memory apartir da chave 
 ```c
 #include <sys/ipc.h>
 #include <sys/shm.h>
@@ -43,15 +44,15 @@ Shared Memory é um bloco de memória alocado pelo processo criador, esse bloco 
 int shmget(key_t key, size_t size, int shmflg);
 ```
 
-
+Permite conectar um processo a uma Shared Memory
 ```c
 #include <sys/types.h>
 #include <sys/shm.h>
 
 void *shmat(int shmid, const void *shmaddr, int shmflg);
-
 ```
 
+Permite desconectar um processo de uma Shared Memory
 ```c
 #include <sys/types.h>
 #include <sys/shm.h>
@@ -60,13 +61,13 @@ int shmdt(const void *shmaddr);
 
 ```
 
+Permite controlar os atributos de uma Shared Memory, para remover basta usar o comando IPC_RMID
 ```c
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
 int shmctl(int shmid, int cmd, struct shmid_ds *buf);
 ```
-
 
 ## ipcs
 A ferramenta ipcs é um utilitário para poder verificar o estado dos IPC's sendo eles: Queues, Semaphores e Shared Memory, o seu funcionamento será demonstrado mais a seguir. Para mais informações execute:
@@ -79,8 +80,8 @@ Para facilitar a implementação a API da Shared Memory foi abstraída para faci
 
 ### shm.h
 
+Aqui é definido a estrutura para guardar o contexto referente a Shared Memory
 ```c
-
 #define MEMORY_PATH_LEN     1024
 
 typedef struct
@@ -96,6 +97,7 @@ typedef struct
 
 ```
 
+Para facilitar o uso da Shared Memory foi criada uma abstração onde o Shared_Memory_Init cria e conecta a uma Shared Memory, Shared_Memory_Detach desconecta o processo da Shared Memory e Shared_Memory_Destroy remove a Shared Memory
 ```c
 bool Shared_Memory_Init(Shared_Memory_t *shm);
 bool Shared_Memory_Detach(Shared_Memory_t *shm);
@@ -104,6 +106,7 @@ bool Shared_Memory_Destroy(Shared_Memory_t *shm);
 
 ### shm.c 
 
+Aqui a Shared Memory é criada e já conecta o processo
 ```c
 bool Shared_Memory_Init(Shared_Memory_t *shm)
 {
@@ -121,6 +124,8 @@ bool Shared_Memory_Init(Shared_Memory_t *shm)
     return status;
 }
 ```
+
+Nessa função o processo é desconectado da Shared Memory
 ```c
 bool Shared_Memory_Detach(Shared_Memory_t *shm)
 {
@@ -134,6 +139,8 @@ bool Shared_Memory_Detach(Shared_Memory_t *shm)
     return status;
 }
 ```
+
+Esta função é responsável por remover a Shared Memory do sistema
 ```c
 bool Shared_Memory_Destroy(Shared_Memory_t *shm)
 {
@@ -194,6 +201,7 @@ if(pid_led == 0)
 ```
 
 ## *button_interface.h*
+Para usar a interface do botão precisa implementar essas duas callbacks para permitir o seu uso
 ```c
 typedef struct 
 {
@@ -203,12 +211,13 @@ typedef struct
 } Button_Interface;
 ```
 
+A assinatura do uso da interface corresponde ao contexto do botão, que depende do modo selecionado, o contexo da Shared Memory, e a interface do botão devidamente preenchida.
 ```c
 bool Button_Run(void *object, Shared_Memory_t *shm, Button_Interface *button);
 ```
 
 ## *button_interface.c*
-
+A implementação da interface baseia-se em inicializar o botão, inicializar a Shared Memory, e no loop realiza a escrita na Shared Memory mediante o pressionamento do botão.
 ```c
 bool Button_Run(void *object, Shared_Memory_t *shm, Button_Interface *button)
 {
@@ -237,7 +246,7 @@ bool Button_Run(void *object, Shared_Memory_t *shm, Button_Interface *button)
 ```
 
 ## *led_interface.h*
-
+Para realizar o uso da interface de LED é necessário preencher os callbacks que serão utilizados pela implementação da interface, sendo a inicialização e a função que altera o estado do LED.
 ```c
 typedef struct 
 {
@@ -246,12 +255,13 @@ typedef struct
 } LED_Interface;
 ```
 
+A assinatura do uso da interface corresponde ao contexto do LED, que depende do modo selecionado, o contexo da Shared Memory, e a interface do LED devidamente preenchida.
 ```c
 bool LED_Run(void *object, Shared_Memory_t *shm, LED_Interface *led);
 ```
 
 ## *led_interface.c*
-
+A implementação da interface baseia-se em inicializar o LED, inicializar a Shared Memory, e no loop realiza a leitura do conteúdo da Shared Memory
 ```c
 bool LED_Run(void *object, Shared_Memory_t *shm, LED_Interface *led)
 {
